@@ -148,7 +148,13 @@ handleRequest server request = do
           , responseResult = case value of
               Left _err -> Nothing -- WAT?
               Right v -> Just v
-          , responseError = Nothing
+          , responseError = case value of
+              Left err -> Just ErrorResponse
+                { errorData=Nothing
+                , errorMessage=T.pack $ show err
+                , errorCode = -32600
+                }
+              Right _ -> Nothing
           }
         Left err -> return $ Left err
 
